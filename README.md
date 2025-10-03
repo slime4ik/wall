@@ -43,10 +43,6 @@ flowchart TD
     
     P --> D
     S3 -->|media files| D
-    
-    style R fill:#e1f5fe
-    style D fill:#f3e5f5
-    style W fill:#e8f5e8
 ```
 
 ## 🚀 Возможности
