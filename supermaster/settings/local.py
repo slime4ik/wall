@@ -86,7 +86,6 @@ TEMPLATES = [
     },
 ]
 
-# Исправьте пути к статическим файлам
 STATICFILES_DIRS = [
     BASE_DIR / 'templates/react',
 ]
