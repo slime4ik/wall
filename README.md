@@ -103,6 +103,9 @@ git clone https://github.com/slime4ik/wall.git
 cd wall
 docker-compose up --build
 ```
-## Сборка статики
+## Сборка статики и миграции
 ```bash
+# статика
 docker-compose run --rm web python manage.py collectstatic --noinput
+# миграции
+docker-compose run --rm web python manage.py migrate
