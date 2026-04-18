@@ -12,7 +12,7 @@ from .models import User, Bookmark
 from django.core.cache import cache
 from image.models import Wallpaper
 from .tasks import send_code_to_email_verify
-from supermaster.decorators import ratelimit # custom ratelimit returns 429
+from supermaster.decorators import ratelimit # custom ratelim returns 429
 from django.utils.decorators import method_decorator
 
 @method_decorator(ratelimit(key='ip', rate='20/m', method='POST'), name='post')
