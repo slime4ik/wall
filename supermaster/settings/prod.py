@@ -4,11 +4,15 @@ from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+def env_list(name):
+    raw = os.environ.get(name, "")
+    return [item.strip() for item in raw.split(",") if item.strip()]
+
 SECRET_KEY = os.getenv('DJANGO_SECRET_KEY')
 
 DEBUG = False
 
-ALLOWED_HOSTS = ['wehelpy.ru', 'www.wehelpy.ru', 'localhost']
+ALLOWED_HOSTS = env_list("ALLOWED_HOSTS")
 
 INSTALLED_APPS = [
     'storages',
@@ -131,16 +135,14 @@ EMAIL_USE_TLS = True
 EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER', 'noreply@yourdomain.com')
 EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD', 'your-email-password')
 
-CACHES = {
-    'default': {
-        'BACKEND': 'django_redis.cache.RedisCache',
-        'LOCATION': 'redis://redis:6379/0',
-        'OPTIONS': {
-            'CLIENT_CLASS': 'django_redis.client.DefaultClient',
-        },
-        'TIMEOUT': 10*60
+REDIS_URL = os.environ.get("REDIS_URL")
+if REDIS_URL:
+    CACHES = {
+        "default": {
+            "BACKEND": "django.core.cache.backends.redis.RedisCache",
+            "LOCATION": REDIS_URL,
+        }
     }
-}
 # RATELIMIT_USE_CACHE = 'cache-for-ratelimiting'
 # Celery
 CELERY_BROKER_URL = os.getenv('CELERY_BROKER_URL')
@@ -170,11 +172,17 @@ SIMPLE_JWT = {
 }
 
 CORS_ALLOW_ALL_ORIGINS = False
-CORS_ALLOWED_ORIGINS = [
-    "https://wehelpy.ru",
-    "http://wehelpy.ru",
-]
+CORS_ALLOWED_ORIGINS = env_list("CORS_ALLOWED_ORIGINS")
+# --- Static & media (served by Caddy in production) --------------------
+STATIC_URL = "/static/"
+STATIC_ROOT = os.environ.get("STATIC_ROOT", str(BASE_DIR / "staticfiles"))
+MEDIA_URL = "/media/"
+MEDIA_ROOT = os.environ.get("MEDIA_ROOT", str(BASE_DIR / "media"))
 
+# --- Behind a reverse proxy (Caddy terminates TLS) ---------------------
+SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
+USE_X_FORWARDED_HOST = True
+CSRF_TRUSTED_ORIGINS = env_list("CSRF_TRUSTED_ORIGINS")
 # Security
 SECURE_SSL_REDIRECT = True
 SESSION_COOKIE_SECURE = True
