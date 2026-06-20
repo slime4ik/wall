@@ -175,7 +175,7 @@ CORS_ALLOW_ALL_ORIGINS = False
 CORS_ALLOWED_ORIGINS = env_list("CORS_ALLOWED_ORIGINS")
 # --- Static & media (served by Caddy in production) --------------------
 STATIC_URL = "/static/"
-STATIC_ROOT = os.environ.get("STATIC_ROOT", str(BASE_DIR / "staticfiles"))
+STATIC_ROOT = "/app/staticfiles"
 MEDIA_URL = "/media/"
 MEDIA_ROOT = os.environ.get("MEDIA_ROOT", str(BASE_DIR / "media"))
 
