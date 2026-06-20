@@ -5,11 +5,10 @@ services:
     build: .
     ports:
       - "8000:8000"
+    env_file:
+      - .env
     environment:
       - DEBUG=False
-      - DATABASE_URL=postgres://postgres:postgres@db:5432/wallpaper
-      - CELERY_BROKER_URL=amqp://admin:securepassword@rabbitmq:5672//
-      - CELERY_RESULT_BACKEND=redis://redis:6379/1
     depends_on:
       db:
         condition: service_healthy
@@ -25,11 +24,10 @@ services:
   celery:
     build: .
     command: celery -A supermaster worker --loglevel=info --concurrency=2
+    env_file:
+      - .env
     environment:
       - DEBUG=False
-      - DATABASE_URL=postgres://postgres:postgres@db:5432/wallpaper
-      - CELERY_BROKER_URL=amqp://admin:securepassword@rabbitmq:5672//
-      - CELERY_RESULT_BACKEND=redis://redis:6379/1
     depends_on:
       db:
         condition: service_healthy
@@ -45,13 +43,13 @@ services:
   db:
     image: postgres:15
     environment:
-      - POSTGRES_DB=wallpaper
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=${DB_NAME}
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER} -d ${DB_NAME}"]
       interval: 5s
       timeout: 5s
       retries: 5
